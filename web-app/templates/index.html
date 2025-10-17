@@ -421,38 +421,38 @@
             color: white;
         }
 
-        .pause-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #FF8C00;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .pause-question-wrapper {
+            text-align: center;
         }
 
-        .pause-question {
-            margin-bottom: 50px;
+        .pause-prompt {
+            font-size: 28px;
+            font-weight: 600;
+            color: #FF8C00;
+            margin-bottom: 30px;
         }
 
         .pause-adjective {
-            font-size: 40px;
+            font-size: 54px;
             font-weight: 900;
             background: linear-gradient(135deg, rgba(255, 69, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
-            padding: 15px 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            padding: 20px 45px;
+            border-radius: 20px;
+            margin-bottom: 50px;
             text-transform: uppercase;
             color: #FFA500;
             border: 2px solid rgba(255, 140, 0, 0.4);
-            box-shadow: 0 0 25px rgba(255, 69, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.4);
+            display: inline-block;
         }
 
         .pause-item {
-            font-size: 52px;
+            font-size: 64px;
             font-weight: 900;
             line-height: 1.2;
             color: #FFD700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            margin-bottom: 30px;
         }
 
         .btn-continue {
@@ -477,11 +477,15 @@
             .item {
                 font-size: 48px;
             }
+            .pause-prompt {
+                font-size: 22px;
+            }
             .pause-adjective {
-                font-size: 36px;
+                font-size: 40px;
+                padding: 15px 30px;
             }
             .pause-item {
-                font-size: 44px;
+                font-size: 50px;
             }
         }
     </style>
@@ -550,9 +554,8 @@
         <!-- Pause/Discussion Screen -->
         <div class="screen" id="pause-screen">
             <div class="pause-content">
-                <div class="pause-title">🔥 Discuss This! 🔥</div>
-
-                <div class="pause-question">
+                <div class="pause-question-wrapper">
+                    <div class="pause-prompt">Is this...</div>
                     <div class="pause-adjective" id="pause-adjective-display">FAST</div>
                     <div class="pause-item" id="pause-item-display">Cheetah</div>
                 </div>
