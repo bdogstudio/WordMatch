@@ -154,6 +154,10 @@
             font-weight: 900;
         }
 
+        .game-stat.score-stat {
+            display: none;
+        }
+
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -396,7 +400,6 @@
             <div class="game-header">
                 <div class="game-stat">
                     <div class="game-stat-label">QUESTION <span id="current-question">1</span>/10</div>
-                    <div class="game-stat-value">Score: <span id="score">0</span></div>
                 </div>
                 <div class="game-stat">
                     <div class="game-stat-label">TIME</div>
@@ -443,21 +446,12 @@
         <!-- Results Screen -->
         <div class="screen" id="results-screen">
             <div class="results-content">
-                <div class="results-title">GAME OVER</div>
-
-                <div class="results-score">
-                    <div class="score-big" id="final-score">0</div>
-                    <div class="score-label">POINTS</div>
-                </div>
+                <div class="results-title">GREAT DEBATES!</div>
 
                 <div class="stats-box">
                     <div class="stat-row">
                         <span class="stat-label">Questions</span>
                         <span class="stat-value" id="total-questions">10</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span class="stat-value" id="accuracy">0%</span>
                     </div>
                 </div>
             </div>
@@ -602,9 +596,6 @@
             document.getElementById('yes-btn').disabled = true;
             document.getElementById('no-btn').disabled = true;
 
-            // Add points (in real game, you'd validate the answer)
-            score += 100;
-
             // Pulse animation
             const itemEl = document.getElementById('item-display');
             itemEl.classList.add('pulse');
@@ -645,11 +636,7 @@
         function endGame() {
             clearInterval(timerInterval);
 
-            const accuracy = Math.round((score / (MAX_QUESTIONS * 100)) * 100);
-
-            document.getElementById('final-score').textContent = score;
             document.getElementById('total-questions').textContent = MAX_QUESTIONS;
-            document.getElementById('accuracy').textContent = accuracy + '%';
 
             showScreen('results-screen');
         }
