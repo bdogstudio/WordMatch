@@ -632,8 +632,8 @@
             showScreen('game-screen');
             nextQuestion();
 
-            // Start timer immediately when Start button is clicked
-            startTimer();
+            // Start timer after a tiny delay to ensure screen is rendered
+            setTimeout(startTimer, 50);
         }
 
         function nextQuestion() {
@@ -734,8 +734,8 @@
             showScreen('game-screen');
             nextQuestion();
 
-            // Start timer immediately when Continue button is clicked
-            startTimer();
+            // Start timer after a tiny delay to ensure screen is rendered
+            setTimeout(startTimer, 50);
         });
 
         document.getElementById('yes-btn').addEventListener('click', () => handleAnswer(true));
