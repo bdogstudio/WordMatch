@@ -1,3 +1,43 @@
+#!/bin/bash
+
+# Word Match - Xcode Project Setup Script
+# Run this on macOS to generate a fresh Xcode project
+
+set -e
+
+echo "🎮 Setting up Word Match Xcode Project..."
+
+# Check if we're on macOS
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    echo "❌ Error: This script must be run on macOS"
+    exit 1
+fi
+
+# Check if Xcode is installed
+if ! command -v xcodebuild &> /dev/null; then
+    echo "❌ Error: Xcode is not installed"
+    echo "Please install Xcode from the App Store"
+    exit 1
+fi
+
+# Get the script directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
+echo "📁 Current directory: $SCRIPT_DIR"
+
+# Remove any existing Xcode project (if damaged)
+if [ -d "AdjectiveGame.xcodeproj" ]; then
+    echo "🗑️  Removing existing Xcode project..."
+    rm -rf AdjectiveGame.xcodeproj
+fi
+
+# Create the Xcode project directory structure
+echo "📦 Creating Xcode project structure..."
+mkdir -p AdjectiveGame.xcodeproj/xcshareddata/xcschemes
+
+# Generate a proper project.pbxproj with valid UUIDs
+cat > AdjectiveGame.xcodeproj/project.pbxproj << 'PBXPROJ'
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
@@ -349,3 +389,101 @@
 	};
 	rootObject = E7A1B2C34D5F678901234599 /* Project object */;
 }
+PBXPROJ
+
+# Create the scheme file
+cat > AdjectiveGame.xcodeproj/xcshareddata/xcschemes/AdjectiveGame.xcscheme << 'SCHEME'
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1500"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E7A1B2C34D5F6789012345A6"
+               BuildableName = "AdjectiveGame.app"
+               BlueprintName = "AdjectiveGame"
+               ReferencedContainer = "container:AdjectiveGame.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "E7A1B2C34D5F6789012345A6"
+            BuildableName = "AdjectiveGame.app"
+            BlueprintName = "AdjectiveGame"
+            ReferencedContainer = "container:AdjectiveGame.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "E7A1B2C34D5F6789012345A6"
+            BuildableName = "AdjectiveGame.app"
+            BlueprintName = "AdjectiveGame"
+            ReferencedContainer = "container:AdjectiveGame.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
+SCHEME
+
+# Set proper permissions
+chmod 644 AdjectiveGame.xcodeproj/project.pbxproj
+chmod 644 AdjectiveGame.xcodeproj/xcshareddata/xcschemes/AdjectiveGame.xcscheme
+
+# Clear any quarantine attributes
+xattr -cr AdjectiveGame.xcodeproj 2>/dev/null || true
+
+echo "✅ Xcode project created successfully!"
+echo ""
+echo "📱 Next steps:"
+echo "   1. Open AdjectiveGame.xcodeproj in Xcode"
+echo "   2. Select your target device/simulator"
+echo "   3. Press ⌘R to build and run"
+echo ""
+echo "🎮 Happy coding!"

@@ -27,9 +27,31 @@ A fast-paced iOS game inspired by charades where players decide whether an adjec
 
 ## 🚀 Getting Started
 
-1. Open `AdjectiveGame.xcodeproj` in Xcode
-2. Select your target device (iPhone or iPad)
-3. Press ⌘R to build and run
+### macOS Setup (Recommended)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/bdogstudio/WordMatch.git
+   cd WordMatch
+   ```
+
+2. Run the setup script to generate a fresh Xcode project:
+   ```bash
+   ./setup_xcode.sh
+   ```
+
+3. Open `AdjectiveGame.xcodeproj` in Xcode
+4. Select your target device (iPhone or iPad)
+5. Press ⌘R to build and run
+
+### Troubleshooting
+
+If you get a "damaged folder" error:
+```bash
+xattr -cr AdjectiveGame.xcodeproj
+```
+
+This clears macOS quarantine flags that can prevent the project from opening.
 
 ## 🏗️ Project Structure
 
