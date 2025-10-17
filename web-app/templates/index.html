@@ -642,6 +642,9 @@
                 return;
             }
 
+            // Stop any existing timer first
+            clearInterval(timerInterval);
+
             currentQuestion++;
 
             // Get random unused item
@@ -660,11 +663,10 @@
             document.getElementById('item-display').textContent = randomItem;
             document.getElementById('score').textContent = score;
 
-            // Reset timer display but DON'T start it yet
+            // Reset timer to full time
             timeRemaining = TIME_LIMIT;
             document.getElementById('timer').textContent = Math.ceil(timeRemaining);
             document.getElementById('progress').style.width = '100%';
-            clearInterval(timerInterval);
 
             // Enable buttons
             document.getElementById('yes-btn').disabled = false;
@@ -672,8 +674,7 @@
         }
 
         function startTimer() {
-            // Start the countdown timer
-            clearInterval(timerInterval);
+            // Start the countdown timer (don't clear here, already cleared in nextQuestion)
             timerInterval = setInterval(updateTimer, 100);
         }
 
