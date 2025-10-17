@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Match - Game</title>
+    <title>Hot Take - Game</title>
     <style>
         * {
             margin: 0;
@@ -51,12 +51,8 @@
         .title h1 {
             font-size: 60px;
             font-weight: 900;
-            line-height: 1;
+            line-height: 1.2;
             margin: 0;
-        }
-
-        .title h1:last-child {
-            margin-top: -10px;
         }
 
         .selection-card {
@@ -305,6 +301,50 @@
             font-weight: 700;
         }
 
+        /* Pause/Discussion Screen */
+        .pause-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .pause-title {
+            font-size: 32px;
+            font-weight: 700;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .pause-question {
+            margin-bottom: 50px;
+        }
+
+        .pause-adjective {
+            font-size: 40px;
+            font-weight: 900;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .pause-item {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .btn-continue {
+            background: white;
+            color: #FF6B6B;
+            font-size: 28px;
+        }
+
         @media (max-width: 400px) {
             .title h1 {
                 font-size: 50px;
@@ -315,6 +355,12 @@
             .item {
                 font-size: 48px;
             }
+            .pause-adjective {
+                font-size: 36px;
+            }
+            .pause-item {
+                font-size: 44px;
+            }
         }
     </style>
 </head>
@@ -323,8 +369,7 @@
         <!-- Setup Screen -->
         <div class="screen active" id="setup-screen">
             <div class="title">
-                <h1>WORD</h1>
-                <h1>MATCH</h1>
+                <h1>HOT TAKE</h1>
             </div>
 
             <div style="margin-bottom: auto;">
@@ -379,6 +424,20 @@
                     <span>YES</span>
                 </button>
             </div>
+        </div>
+
+        <!-- Pause/Discussion Screen -->
+        <div class="screen" id="pause-screen">
+            <div class="pause-content">
+                <div class="pause-title">Discuss This!</div>
+
+                <div class="pause-question">
+                    <div class="pause-adjective" id="pause-adjective-display">FAST</div>
+                    <div class="pause-item" id="pause-item-display">Cheetah</div>
+                </div>
+            </div>
+
+            <button class="btn btn-continue" id="continue-btn">Continue</button>
         </div>
 
         <!-- Results Screen -->
@@ -552,7 +611,7 @@
 
             setTimeout(() => {
                 itemEl.classList.remove('pulse');
-                nextQuestion();
+                showPauseScreen();
             }, 500);
         }
 
@@ -563,8 +622,20 @@
             document.getElementById('yes-btn').disabled = true;
             document.getElementById('no-btn').disabled = true;
 
-            setTimeout(nextQuestion, 500);
+            setTimeout(showPauseScreen, 500);
         }
+
+        function showPauseScreen() {
+            // Update pause screen with current question
+            document.getElementById('pause-adjective-display').textContent = selectedAdjective.toUpperCase();
+            document.getElementById('pause-item-display').textContent = document.getElementById('item-display').textContent;
+
+            showScreen('pause-screen');
+        }
+
+        document.getElementById('continue-btn').addEventListener('click', () => {
+            nextQuestion();
+        });
 
         document.getElementById('yes-btn').addEventListener('click', () => handleAnswer(true));
         document.getElementById('no-btn').addEventListener('click', () => handleAnswer(false));
