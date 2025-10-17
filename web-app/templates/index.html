@@ -494,9 +494,6 @@
         <div class="screen" id="game-screen">
             <div class="game-header">
                 <div class="game-stat">
-                    <div class="game-stat-label">QUESTION <span id="current-question">1</span>/10</div>
-                </div>
-                <div class="game-stat">
                     <div class="game-stat-label">TIME</div>
                     <div class="game-stat-value"><span id="timer">5</span>s</div>
                 </div>
@@ -522,6 +519,8 @@
                     <span>YES</span>
                 </button>
             </div>
+
+            <button class="btn btn-primary" id="end-game-btn" style="margin-top: 20px;">End Game</button>
         </div>
 
         <!-- Pause/Discussion Screen -->
@@ -566,7 +565,6 @@
         let score = 0;
         let timeRemaining = 5;
         let timerInterval = null;
-        const MAX_QUESTIONS = 10;
         const TIME_LIMIT = 5;
 
         // Load data
@@ -637,11 +635,6 @@
         }
 
         function nextQuestion() {
-            if (currentQuestion >= MAX_QUESTIONS) {
-                endGame();
-                return;
-            }
-
             // Stop any existing timer first
             clearInterval(timerInterval);
 
@@ -658,10 +651,8 @@
             usedItems.add(randomItem);
 
             // Update UI
-            document.getElementById('current-question').textContent = currentQuestion;
             document.getElementById('adjective-display').textContent = selectedAdjective.toUpperCase();
             document.getElementById('item-display').textContent = randomItem;
-            document.getElementById('score').textContent = score;
 
             // Reset timer to full time
             timeRemaining = TIME_LIMIT;
@@ -741,12 +732,13 @@
 
         document.getElementById('yes-btn').addEventListener('click', () => handleAnswer(true));
         document.getElementById('no-btn').addEventListener('click', () => handleAnswer(false));
+        document.getElementById('end-game-btn').addEventListener('click', endGame);
 
         // Results Screen
         function endGame() {
             clearInterval(timerInterval);
 
-            document.getElementById('total-questions').textContent = MAX_QUESTIONS;
+            document.getElementById('total-questions').textContent = currentQuestion;
 
             showScreen('results-screen');
         }
