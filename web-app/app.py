@@ -11,42 +11,44 @@ app = Flask(__name__)
 
 # Game Data
 ADJECTIVES = [
-    "Fast", "Slow", "Big", "Small", "Hot", "Cold",
-    "Expensive", "Cheap", "Beautiful", "Ugly", "Loud", "Quiet",
-    "Heavy", "Light", "Dangerous", "Safe", "Famous", "Unknown",
-    "Old", "New"
+    "Overrated", "Underrated", "Toxic", "Cringe", "Valid", "Sus",
+    "A Red Flag", "A Vibe", "Iconic", "Unhinged", "Based", "Problematic",
+    "Elite", "Mid", "Cursed", "Chaotic", "Legendary", "Sketchy",
+    "Fire", "Peak"
 ]
 
 CATEGORIES = {
-    "Animals": [
-        "Elephant", "Cheetah", "Snail", "Mouse", "Blue Whale",
-        "Hummingbird", "Lion", "Butterfly", "Shark", "Goldfish",
-        "Eagle", "Penguin", "Giraffe", "Ant", "Bear"
+    "Social Media Apps": [
+        "TikTok", "Instagram", "Twitter/X", "BeReal", "Snapchat",
+        "Facebook", "LinkedIn", "Reddit", "Threads", "Hinge",
+        "Tinder", "Bumble", "Discord", "Twitch", "YouTube"
     ],
-    "Cities": [
-        "New York", "Tokyo", "Paris", "London", "Dubai",
-        "Mumbai", "Sydney", "Moscow", "Rio de Janeiro", "Cairo",
-        "Los Angeles", "Bangkok", "Rome", "Barcelona", "Singapore"
+    "Celebrities": [
+        "Kanye West", "Taylor Swift", "Elon Musk", "Kim Kardashian", "Joe Rogan",
+        "The Rock", "Lizzo", "Andrew Tate", "Mr. Beast", "Charli D'Amelio",
+        "Bad Bunny", "Billie Eilish", "Drake", "Olivia Rodrigo", "Harry Styles"
     ],
-    "Foods": [
-        "Pizza", "Sushi", "Ice Cream", "Broccoli", "Lobster",
-        "Bread", "Caviar", "Hot Dog", "Truffle", "Ramen",
-        "Burger", "Salad", "Steak", "Popcorn", "Chocolate"
+    "Foods & Drinks": [
+        "Pineapple on Pizza", "IPAs", "Oat Milk", "Kombucha", "Avocado Toast",
+        "Hot Dogs", "Espresso Martinis", "White Claws", "Sushi", "Kale",
+        "Chipotle", "Energy Drinks", "Vegan Burgers", "Mimosas", "Ranch Dressing"
     ],
-    "Objects": [
-        "Ferrari", "Bicycle", "Diamond", "Pencil", "Airplane",
-        "Rocket", "Feather", "Anvil", "Smartphone", "Book",
-        "Piano", "Guitar", "Laptop", "Candle", "Mirror"
+    "Pop Culture": [
+        "Marvel Movies", "Game of Thrones Ending", "The Office", "K-Pop", "Anime",
+        "Reality TV", "True Crime Podcasts", "Fortnite", "Crypto", "NFTs",
+        "Astrology", "CrossFit", "Yoga", "Therapy", "Self-Help Books"
     ],
-    "People": [
-        "Albert Einstein", "Beyoncé", "Abraham Lincoln", "Leonardo da Vinci", "Oprah Winfrey",
-        "Michael Jordan", "Shakespeare", "Lady Gaga", "Nelson Mandela", "Taylor Swift",
-        "Steve Jobs", "Mozart", "Cleopatra", "Elon Musk", "Marie Curie"
+    "Hot Takes": [
+        "Pumpkin Spice Season", "New Year's Eve", "Valentine's Day", "Brunch",
+        "Going to the Gym", "Working from Home", "Night Clubs", "Karaoke",
+        "Double Texting", "Splitting the Bill", "Small Talk", "Ghosting",
+        "Music Festivals", "House Parties", "Day Drinking"
     ],
-    "Places": [
-        "Grand Canyon", "Eiffel Tower", "Mount Everest", "Sahara Desert", "Amazon Rainforest",
-        "Great Wall of China", "Antarctica", "Niagara Falls", "Statue of Liberty", "Taj Mahal",
-        "Colosseum", "Great Barrier Reef", "Stonehenge", "Pyramids of Giza", "Machu Picchu"
+    "Modern Life": [
+        "Cancel Culture", "Hustle Culture", "Influencers", "Podcasts",
+        "Fast Fashion", "Uber/Lyft", "DoorDash", "Airbnb", "Dating Apps",
+        "Group Chats", "Voice Messages", "Read Receipts", "FaceTime",
+        "Thrift Shopping", "Meal Prep"
     ]
 }
 
