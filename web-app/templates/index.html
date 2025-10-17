@@ -423,33 +423,13 @@
 
         .pause-question-wrapper {
             text-align: center;
+            padding: 0 20px;
         }
 
-        .pause-prompt {
-            font-size: 28px;
-            font-weight: 600;
-            color: #FF8C00;
-            margin-bottom: 30px;
-        }
-
-        .pause-adjective {
-            font-size: 54px;
+        .pause-full-question {
+            font-size: 56px;
             font-weight: 900;
-            background: linear-gradient(135deg, rgba(255, 69, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
-            padding: 20px 45px;
-            border-radius: 20px;
-            margin-bottom: 50px;
-            text-transform: uppercase;
-            color: #FFA500;
-            border: 2px solid rgba(255, 140, 0, 0.4);
-            box-shadow: 0 0 30px rgba(255, 69, 0, 0.4);
-            display: inline-block;
-        }
-
-        .pause-item {
-            font-size: 64px;
-            font-weight: 900;
-            line-height: 1.2;
+            line-height: 1.3;
             color: #FFD700;
             text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
             margin-bottom: 30px;
@@ -477,15 +457,8 @@
             .item {
                 font-size: 48px;
             }
-            .pause-prompt {
-                font-size: 22px;
-            }
-            .pause-adjective {
-                font-size: 40px;
-                padding: 15px 30px;
-            }
-            .pause-item {
-                font-size: 50px;
+            .pause-full-question {
+                font-size: 42px;
             }
         }
     </style>
@@ -555,9 +528,7 @@
         <div class="screen" id="pause-screen">
             <div class="pause-content">
                 <div class="pause-question-wrapper">
-                    <div class="pause-prompt">Is this...</div>
-                    <div class="pause-adjective" id="pause-adjective-display">FAST</div>
-                    <div class="pause-item" id="pause-item-display">Cheetah</div>
+                    <div class="pause-full-question" id="pause-full-question">Is Cheetah fast?</div>
                 </div>
             </div>
 
@@ -747,9 +718,14 @@
         }
 
         function showPauseScreen() {
-            // Update pause screen with current question
-            document.getElementById('pause-adjective-display').textContent = selectedAdjective.toUpperCase();
-            document.getElementById('pause-item-display').textContent = document.getElementById('item-display').textContent;
+            // Format the question: "Is [item] [adjective]?"
+            const item = document.getElementById('item-display').textContent;
+            const adjective = selectedAdjective.toLowerCase();
+
+            // Build the question sentence
+            const question = `Is ${item} ${adjective}?`;
+
+            document.getElementById('pause-full-question').textContent = question;
 
             showScreen('pause-screen');
         }
