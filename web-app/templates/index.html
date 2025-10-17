@@ -400,7 +400,7 @@
                 </div>
                 <div class="game-stat">
                     <div class="game-stat-label">TIME</div>
-                    <div class="game-stat-value"><span id="timer">10</span>s</div>
+                    <div class="game-stat-value"><span id="timer">5</span>s</div>
                 </div>
             </div>
 
@@ -478,10 +478,10 @@
         let usedItems = new Set();
         let currentQuestion = 0;
         let score = 0;
-        let timeRemaining = 10;
+        let timeRemaining = 5;
         let timerInterval = null;
         const MAX_QUESTIONS = 10;
-        const TIME_LIMIT = 10;
+        const TIME_LIMIT = 5;
 
         // Load data
         async function loadData() {
