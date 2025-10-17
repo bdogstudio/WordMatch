@@ -69,6 +69,9 @@
             color: white;
             margin-top: 60px;
             margin-bottom: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .title h1 {
@@ -83,6 +86,39 @@
             text-shadow: 0 0 40px rgba(255, 69, 0, 0.5);
             filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.6));
             animation: flicker 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .flame-left, .flame-right {
+            font-size: 60px;
+            animation: flame-dance 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.8));
+        }
+
+        .flame-left {
+            animation-delay: 0s;
+        }
+
+        .flame-right {
+            animation-delay: 1s;
+        }
+
+        @keyframes flame-dance {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+            }
+            25% {
+                transform: translateY(-5px) scale(1.1);
+            }
+            50% {
+                transform: translateY(0px) scale(0.95);
+            }
+            75% {
+                transform: translateY(-3px) scale(1.05);
+            }
         }
 
         @keyframes flicker {
@@ -429,7 +465,11 @@
 
         @media (max-width: 400px) {
             .title h1 {
-                font-size: 50px;
+                font-size: 40px;
+                gap: 10px;
+            }
+            .flame-left, .flame-right {
+                font-size: 36px;
             }
             .adjective {
                 font-size: 40px;
@@ -451,7 +491,7 @@
         <!-- Setup Screen -->
         <div class="screen active" id="setup-screen">
             <div class="title">
-                <h1>🔥 HOT TAKE 🔥</h1>
+                <h1><span class="flame-left">🔥</span> HOT TAKE <span class="flame-right">🔥</span></h1>
             </div>
 
             <div style="margin-bottom: auto;">
