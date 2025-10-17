@@ -437,7 +437,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-continue" id="continue-btn">Continue</button>
+            <button class="btn btn-continue" id="continue-btn">Next</button>
         </div>
 
         <!-- Results Screen -->
@@ -634,6 +634,7 @@
         }
 
         document.getElementById('continue-btn').addEventListener('click', () => {
+            showScreen('game-screen');
             nextQuestion();
         });
 
