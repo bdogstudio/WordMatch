@@ -657,6 +657,9 @@
 
             showScreen('game-screen');
             nextQuestion();
+
+            // Start timer immediately when Start button is clicked
+            startTimer();
         }
 
         function nextQuestion() {
@@ -683,15 +686,21 @@
             document.getElementById('item-display').textContent = randomItem;
             document.getElementById('score').textContent = score;
 
-            // Start timer
+            // Reset timer display but DON'T start it yet
             timeRemaining = TIME_LIMIT;
-            updateTimer();
+            document.getElementById('timer').textContent = Math.ceil(timeRemaining);
+            document.getElementById('progress').style.width = '100%';
             clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimer, 100);
 
             // Enable buttons
             document.getElementById('yes-btn').disabled = false;
             document.getElementById('no-btn').disabled = false;
+        }
+
+        function startTimer() {
+            // Start the countdown timer
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 100);
         }
 
         function updateTimer() {
@@ -745,6 +754,9 @@
         document.getElementById('continue-btn').addEventListener('click', () => {
             showScreen('game-screen');
             nextQuestion();
+
+            // Start timer immediately when Continue button is clicked
+            startTimer();
         });
 
         document.getElementById('yes-btn').addEventListener('click', () => handleAnswer(true));
