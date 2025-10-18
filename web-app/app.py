@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Hot Take - Multiplayer Web Game
-A Quiplash-style party game where players vote on hot takes
+Spot The Lie - Multiplayer Web Game
+A Fibbage-style party game where players create fake answers and vote for the truth
 """
 
 from flask import Flask, render_template, jsonify, request
@@ -20,95 +20,109 @@ def generate_room_code():
     """Generate a 4-character room code"""
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
 
-# Game Data
-ADJECTIVES = [
-    "Overrated", "Underrated", "Toxic", "Cringe", "Valid", "Sus",
-    "A Red Flag", "A Green Flag", "A Vibe", "Iconic", "Unhinged", "Based",
-    "Problematic", "Elite", "Mid", "Cursed", "Chaotic", "Legendary", "Sketchy",
-    "Fire", "Peak", "The Worst", "Giving Main Character Energy", "Giving NPC Energy",
-    "Bussin", "No Cap", "Delulu", "Slay", "Ate and Left No Crumbs", "Lowkey Fire",
-    "Highkey Sus", "Giving Ick", "Living Rent Free in My Head"
+# Game Data - Wild facts with blanks for players to fill
+PROMPTS = [
+    {
+        "text": "In 2019, a Florida man was arrested for throwing a _____ at his girlfriend during an argument.",
+        "answer": "alligator",
+        "category": "Florida Man"
+    },
+    {
+        "text": "Scientists discovered that _____ can get drunk and act aggressively when intoxicated.",
+        "answer": "bees",
+        "category": "Weird Science"
+    },
+    {
+        "text": "A man in Japan married a _____ in 2018.",
+        "answer": "hologram anime character",
+        "category": "WTF Weddings"
+    },
+    {
+        "text": "The world record for the longest _____ is 17 hours and 2 minutes.",
+        "answer": "burp",
+        "category": "Weird Records"
+    },
+    {
+        "text": "In ancient Rome, people used _____ as mouthwash.",
+        "answer": "urine",
+        "category": "Gross History"
+    },
+    {
+        "text": "A study found that _____ makes you more attractive to mosquitoes.",
+        "answer": "drinking beer",
+        "category": "Weird Science"
+    },
+    {
+        "text": "In 2023, a TikToker went viral for eating _____ for 100 days straight.",
+        "answer": "raw liver",
+        "category": "Viral Stunts"
+    },
+    {
+        "text": "The average person spends 6 months of their life _____ .",
+        "answer": "waiting for red lights to turn green",
+        "category": "Weird Facts"
+    },
+    {
+        "text": "A woman was banned from Walmart for riding around on a _____ while drinking wine.",
+        "answer": "motorized scooter cart",
+        "category": "Walmart Stories"
+    },
+    {
+        "text": "In Sweden, there's a museum dedicated entirely to _____ .",
+        "answer": "failures and bad ideas",
+        "category": "Weird Museums"
+    },
+    {
+        "text": "A man proposed to his girlfriend using _____ and she said yes.",
+        "answer": "100 tacos arranged in a heart",
+        "category": "Creative Proposals"
+    },
+    {
+        "text": "The most expensive _____ ever sold was $69 million.",
+        "answer": "NFT",
+        "category": "Crazy Expensive"
+    },
+    {
+        "text": "In 2022, a Twitter user became famous for _____ for 365 days.",
+        "answer": "posting pictures of their pet rock",
+        "category": "Social Media Fame"
+    },
+    {
+        "text": "Scientists proved that _____ can actually improve your memory.",
+        "answer": "smelling rosemary",
+        "category": "Brain Facts"
+    },
+    {
+        "text": "A restaurant in Tokyo only serves dishes made with _____ .",
+        "answer": "insects",
+        "category": "Weird Restaurants"
+    },
+    {
+        "text": "The world's most expensive coffee is made from _____ .",
+        "answer": "beans pooped out by civets",
+        "category": "Gross Food"
+    },
+    {
+        "text": "In 2024, a YouTuber got 10 million views for _____ for 24 hours.",
+        "answer": "living in a Walmart",
+        "category": "YouTube Challenges"
+    },
+    {
+        "text": "A couple got married at _____ because the groom proposed there.",
+        "answer": "Taco Bell",
+        "category": "Unusual Venues"
+    },
+    {
+        "text": "The most bizarre item ever stolen was _____ from a museum in 2023.",
+        "answer": "a 18 karat gold toilet",
+        "category": "Weird Crimes"
+    },
+    {
+        "text": "A fitness influencer went viral for working out with _____ instead of weights.",
+        "answer": "frozen turkeys",
+        "category": "Fitness Fails"
+    }
 ]
-
-CATEGORIES = {
-    "Social Media Discourse": [
-        "TikTok", "Instagram Reels", "BeReal", "Snapchat Streaks",
-        "LinkedIn Influencers", "Twitter Discourse", "Reddit Arguments", "Discord Mods",
-        "Posting Thirst Traps", "Posting Your Gym Progress", "Posting Your Relationship",
-        "Main Character Instagram Stories", "Vague Posting", "Oversharing on Social Media",
-        "Posting Food Before Eating"
-    ],
-    "Dating & Relationship Chaos": [
-        "Your Ex", "Your Ex's New Partner", "Situationships", "Friends With Benefits",
-        "Exes Texting You at 2AM", "Dating Your Friend's Ex", "Sliding Into DMs",
-        "First Date Small Talk", "Kissing on the First Date", "Saying 'I Love You' First",
-        "Drunk Confessions of Love", "Getting Back With Your Ex", "Love Triangles",
-        "Age Gap Relationships", "Long Distance Relationships"
-    ],
-    "Spicy Truth or Drink": [
-        "Body Count Conversations", "Hookup Stories", "Walk of Shame",
-        "Your Most Embarrassing Hookup", "Fake Orgasms", "Sex Dreams About Friends",
-        "One Night Stands", "Dating App Horror Stories", "Catfishing",
-        "Sending Nudes", "Getting Caught by Parents", "Bar Bathrooms",
-        "Your Wildest Fantasy", "Threesomes", "Sugar Daddies/Mommies"
-    ],
-    "Most Likely To... (Drink If You're It!)": [
-        "Most Likely to Go Viral on TikTok", "Most Likely to Drunk Text Their Ex",
-        "Most Likely to Hook Up With Someone Here", "Most Likely to Get Arrested",
-        "Most Likely to Become Famous", "Most Likely to Sleep Through an Alarm",
-        "Most Likely to Start Drama", "Most Likely to Cry While Drunk",
-        "Most Likely to Blackout Tonight", "Most Likely to Get a Tattoo They Regret",
-        "Most Likely to Date a Celebrity", "Most Likely to Move to Another Country",
-        "Most Likely to Get Married First", "Most Likely to Have Kids First",
-        "Most Likely to Still Be Single in 10 Years"
-    ],
-    "Party Chaos": [
-        "Shots Before 10PM", "Playing Beer Pong", "Strip Poker", "Body Shots",
-        "Drunk Karaoke", "Shotgunning Beers", "Doing Keg Stands", "Flip Cup",
-        "Kings Cup", "Drunk Dancing", "Making Out at Parties",
-        "Throwing Up at a Party", "Crying in the Bathroom", "Losing Your Phone",
-        "Uber Rides Home"
-    ],
-    "Gen Z Takes": [
-        "Therapy", "Astrology", "Manifestation", "Crystals and Tarot Cards",
-        "Taking Mental Health Days", "Cancel Culture", "Calling Everything Trauma",
-        "Quiet Quitting", "Side Hustles", "Hustle Culture",
-        "Being a Girl Boss", "Adulting", "Main Character Energy",
-        "Romanticizing Your Life", "Self Care Sundays"
-    ],
-    "The Ick List": [
-        "Guys Who Go to the Gym 7 Days a Week", "People Who Don't Drink",
-        "Picky Eaters", "Being Rude to Waiters", "Bad Texters",
-        "People Who Still Use Facebook", "Guys With Man Buns",
-        "Cargo Shorts", "Fedoras", "Excessive Cologne/Perfume",
-        "Talking About Their Ex", "Being Mean to Animals",
-        "People Who Don't Tip", "Chewing With Your Mouth Open", "Not Washing Your Hands"
-    ],
-    "This Friend Group": [
-        "The Mom Friend", "The Drunk Friend", "The Therapy Friend",
-        "The Party Animal", "The One Always in a Relationship",
-        "The Serial Ghoster", "The Overthinker", "The Hot Mess",
-        "The One With Commitment Issues", "The Flirt", "The Drama Starter",
-        "The Heartbreaker", "The Hopeless Romantic", "The Wild Card",
-        "The One Everyone Has a Crush On"
-    ],
-    "Broke College Student": [
-        "Ramen Noodles for Every Meal", "Overdrafting Your Bank Account",
-        "Student Loans", "Living With Your Parents", "Unpaid Internships",
-        "Cheap Beer", "Happy Hour Only", "Stealing From Dining Halls",
-        "Sharing Netflix Passwords", "Walking Instead of Ubering",
-        "Free Food at Events", "Thrifting", "Selling Your Stuff for Cash",
-        "Asking Parents for Money", "Working Three Jobs"
-    ],
-    "Absolute Chaos": [
-        "Screaming Crying Throwing Up", "Being Delulu", "Having the Ick",
-        "Stalking Your Crush on Instagram", "Overthinking Everything",
-        "Main Character Syndrome", "Posting Cringe", "Being Chronically Online",
-        "Parasocial Relationships", "Simping", "Touch Grass Moments",
-        "Living in a Situationship", "Being Down Bad", "Getting No Bitches",
-        "Ratio'd on Twitter"
-    ]
-}
 
 
 @app.route('/')
@@ -129,24 +143,10 @@ def play():
     return render_template('play.html')
 
 
-@app.route('/api/adjectives')
-def get_adjectives():
-    """Return list of available adjectives"""
-    return jsonify(ADJECTIVES)
-
-
-@app.route('/api/categories')
-def get_categories():
-    """Return list of available categories"""
-    return jsonify(list(CATEGORIES.keys()))
-
-
-@app.route('/api/items/<category>')
-def get_items(category):
-    """Return items for a specific category"""
-    if category in CATEGORIES:
-        return jsonify(CATEGORIES[category])
-    return jsonify([]), 404
+@app.route('/api/prompts')
+def get_prompts():
+    """Return list of available prompts"""
+    return jsonify([p['category'] for p in PROMPTS])
 
 
 # SocketIO Events
@@ -161,28 +161,19 @@ def handle_create_room(data):
 
     game_rooms[room_code] = {
         'host_sid': request.sid,
-        'players': {
-            request.sid: {
-                'name': host_name,
-                'voted': False,
-                'prompts': [],
-                'prompts_submitted': False
-            }
-        },
+        'players': {},
         'state': 'lobby',
-        'adjective': data.get('adjective'),
-        'category': data.get('category'),
-        'current_item': None,
-        'votes': {'yay': 0, 'nah': 0},
-        'voted_players': set(),
-        'player_votes': {}  # Track individual votes: {player_sid: 'yay' or 'nah'}
+        'current_prompt': None,
+        'current_lies': {},  # {player_sid: lie_text}
+        'current_votes': {},  # {player_sid: voted_answer}
+        'scores': {},  # {player_sid: points}
+        'used_prompts': [],
+        'round': 0
     }
 
     join_room(room_code)
     emit('room_created', {
-        'room_code': room_code,
-        'adjective': data.get('adjective'),
-        'category': data.get('category')
+        'room_code': room_code
     })
 
 
@@ -198,18 +189,14 @@ def handle_join_room(data):
 
     room = game_rooms[room_code]
     room['players'][request.sid] = {
-        'name': player_name,
-        'voted': False,
-        'prompts': [],
-        'prompts_submitted': False
+        'name': player_name
     }
+    room['scores'][request.sid] = 0
 
     join_room(room_code)
     emit('joined_room', {
         'player_name': player_name,
-        'room_code': room_code,
-        'adjective': room['adjective'],
-        'category': room['category']
+        'room_code': room_code
     })
 
     # Notify host of new player
@@ -219,11 +206,11 @@ def handle_join_room(data):
     }, room=room_code)
 
 
-@socketio.on('submit_prompts')
-def handle_submit_prompts(data):
-    """Player submits their 5 prompts"""
+@socketio.on('submit_lie')
+def handle_submit_lie(data):
+    """Player submits their lie for the current prompt"""
     room_code = data.get('room_code')
-    prompts = data.get('prompts', [])
+    lie = data.get('lie', '').strip()
 
     if room_code not in game_rooms:
         return
@@ -232,22 +219,25 @@ def handle_submit_prompts(data):
     if request.sid not in room['players']:
         return
 
-    # Store player's prompts
-    room['players'][request.sid]['prompts'] = prompts[:5]  # Max 5 prompts
-    room['players'][request.sid]['prompts_submitted'] = True
+    # Store player's lie
+    room['current_lies'][request.sid] = lie
 
-    # Count how many players have submitted prompts
+    # Check if all players have submitted
     total_players = len(room['players'])
-    submitted_count = sum(1 for p in room['players'].values() if p['prompts_submitted'])
+    submitted_count = len(room['current_lies'])
 
     # Notify host of progress
-    socketio.emit('prompts_progress', {
+    socketio.emit('lies_progress', {
         'submitted': submitted_count,
         'total': total_players
     }, room=room_code)
 
-    # Notify player their prompts were received
-    emit('prompts_confirmed', {})
+    # Notify player their lie was received
+    emit('lie_confirmed', {})
+
+    # If all players submitted, move to voting
+    if submitted_count == total_players:
+        socketio.emit('all_lies_submitted', {}, room=room_code)
 
 
 @socketio.on('start_game')
@@ -262,56 +252,73 @@ def handle_start_game(data):
     if request.sid != room['host_sid']:
         return
 
-    # Start with category items
-    category = room['category']
-    all_prompts = CATEGORIES.get(category, []).copy()
-
-    # Add player-submitted prompts to the pool
-    for player_sid, player_data in room['players'].items():
-        all_prompts.extend(player_data['prompts'])
-
-    # Store in room for game use
-    room['all_prompts'] = all_prompts
-    room['used_prompts'] = set()
     room['state'] = 'playing'
+    room['round'] = 0
 
-    # Send all prompts to host
-    socketio.emit('game_started', {
-        'prompts': all_prompts
+    # Start first round
+    start_new_round(room_code)
+
+
+def start_new_round(room_code):
+    """Start a new round with a fresh prompt"""
+    room = game_rooms[room_code]
+    room['round'] += 1
+
+    # Pick a random unused prompt
+    available_prompts = [p for p in PROMPTS if p['text'] not in room['used_prompts']]
+    if not available_prompts:
+        # Game over
+        socketio.emit('game_over', {
+            'scores': room['scores'],
+            'players': {sid: p['name'] for sid, p in room['players'].items()}
+        }, room=room_code)
+        return
+
+    prompt = random.choice(available_prompts)
+    room['used_prompts'].append(prompt['text'])
+    room['current_prompt'] = prompt
+    room['current_lies'] = {}
+    room['current_votes'] = {}
+    room['state'] = 'writing'
+
+    # Send prompt to everyone
+    socketio.emit('new_round', {
+        'round': room['round'],
+        'prompt_text': prompt['text'],
+        'category': prompt['category']
     }, room=room_code)
 
 
-@socketio.on('next_question')
-def handle_next_question(data):
-    """Host requests next question"""
+@socketio.on('start_voting')
+def handle_start_voting(data):
+    """Host starts the voting phase"""
     room_code = data.get('room_code')
-    item = data.get('item')
-    adjective = data.get('adjective')
 
     if room_code not in game_rooms:
         return
 
     room = game_rooms[room_code]
-    room['current_item'] = item
-    room['votes'] = {'yay': 0, 'nah': 0}
-    room['voted_players'] = set()
-    room['player_votes'] = {}  # Reset individual votes
+    if request.sid != room['host_sid']:
+        return
 
-    # Reset player voted status
-    for player_sid in room['players']:
-        room['players'][player_sid]['voted'] = False
+    room['state'] = 'voting'
 
-    socketio.emit('new_question', {
-        'item': item,
-        'adjective': adjective
+    # Shuffle all answers (lies + truth)
+    answers = list(room['current_lies'].values())
+    answers.append(room['current_prompt']['answer'])
+    random.shuffle(answers)
+
+    # Send shuffled answers to everyone
+    socketio.emit('voting_started', {
+        'answers': answers
     }, room=room_code)
 
 
 @socketio.on('submit_vote')
 def handle_vote(data):
-    """Player submits their vote"""
+    """Player submits their vote for which answer is true"""
     room_code = data.get('room_code')
-    vote = data.get('vote')  # 'yay' or 'nah'
+    voted_answer = data.get('answer')
 
     if room_code not in game_rooms:
         return
@@ -319,53 +326,101 @@ def handle_vote(data):
     room = game_rooms[room_code]
 
     # Check if player already voted
-    if request.sid in room['voted_players']:
+    if request.sid in room['current_votes']:
         return
 
     # Record vote
-    room['voted_players'].add(request.sid)
-    room['players'][request.sid]['voted'] = True
-    room['votes'][vote] += 1
-    room['player_votes'][request.sid] = vote  # Track individual vote
+    room['current_votes'][request.sid] = voted_answer
 
-    # Send updated vote counts to host
+    # Notify host of progress
     total_players = len(room['players'])
-    votes_received = len(room['voted_players'])
+    votes_received = len(room['current_votes'])
 
-    socketio.emit('vote_received', {
-        'votes': room['votes'],
+    socketio.emit('votes_progress', {
         'votes_received': votes_received,
         'total_players': total_players
     }, room=room_code)
 
     # Notify player their vote was counted
-    emit('vote_confirmed', {'vote': vote})
+    emit('vote_confirmed', {})
+
+    # If all players voted, notify host
+    if votes_received == total_players:
+        socketio.emit('all_votes_in', {}, room=room_code)
 
 
 @socketio.on('show_results')
 def handle_show_results(data):
-    """Host shows poll results"""
+    """Host shows results and calculates scores"""
     room_code = data.get('room_code')
 
     if room_code not in game_rooms:
         return
 
     room = game_rooms[room_code]
+    room['state'] = 'results'
 
-    # Build detailed voter breakdown
-    voter_breakdown = {
-        'yay': [],
-        'nah': []
-    }
+    correct_answer = room['current_prompt']['answer']
 
-    for player_sid, vote in room['player_votes'].items():
+    # Calculate scores
+    results = []
+    for player_sid, voted_answer in room['current_votes'].items():
         player_name = room['players'][player_sid]['name']
-        voter_breakdown[vote].append(player_name)
 
+        # +1000 points for guessing correctly
+        if voted_answer == correct_answer:
+            room['scores'][player_sid] += 1000
+            results.append({
+                'player': player_name,
+                'voted_for': voted_answer,
+                'correct': True,
+                'points_earned': 1000
+            })
+        else:
+            results.append({
+                'player': player_name,
+                'voted_for': voted_answer,
+                'correct': False,
+                'points_earned': 0
+            })
+
+    # +500 points for each person who voted for your lie
+    for liar_sid, lie_text in room['current_lies'].items():
+        votes_for_lie = sum(1 for voted in room['current_votes'].values() if voted == lie_text)
+        if votes_for_lie > 0:
+            points = votes_for_lie * 500
+            room['scores'][liar_sid] += points
+            liar_name = room['players'][liar_sid]['name']
+            results.append({
+                'player': liar_name,
+                'lie': lie_text,
+                'fooled': votes_for_lie,
+                'points_earned': points
+            })
+
+    # Send results to everyone
     socketio.emit('display_results', {
-        'votes': room['votes'],
-        'voter_breakdown': voter_breakdown
+        'correct_answer': correct_answer,
+        'all_answers': list(room['current_lies'].values()) + [correct_answer],
+        'results': results,
+        'scores': room['scores'],
+        'players': {sid: p['name'] for sid, p in room['players'].items()}
     }, room=room_code)
+
+
+@socketio.on('next_round')
+def handle_next_round(data):
+    """Host starts next round"""
+    room_code = data.get('room_code')
+
+    if room_code not in game_rooms:
+        return
+
+    room = game_rooms[room_code]
+    if request.sid != room['host_sid']:
+        return
+
+    start_new_round(room_code)
 
 
 @socketio.on('disconnect')
@@ -380,6 +435,8 @@ def handle_disconnect():
         elif request.sid in room['players']:
             player_name = room['players'][request.sid]['name']
             del room['players'][request.sid]
+            if request.sid in room['scores']:
+                del room['scores'][request.sid]
             socketio.emit('player_left', {
                 'player_name': player_name,
                 'player_count': len(room['players'])
