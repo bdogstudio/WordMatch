@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hot Take - Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a0000 50%, #330000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(255, 69, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(255, 140, 0, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        #prompt-screen {
+            justify-content: flex-start;
+        }
+
+        /* Join Screen */
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title h1 {
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(180deg, #FF4500 0%, #FF6347 30%, #FF8C00 60%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.6));
+        }
+
+        .input-card {
+            background: rgba(255, 69, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-card label {
+            display: block;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-card input {
+            width: 100%;
+            padding: 18px;
+            font-size: 24px;
+            font-weight: 700;
+            background: rgba(255, 69, 0, 0.15);
+            border: 2px solid rgba(255, 140, 0, 0.4);
+            border-radius: 12px;
+            color: #FFA500;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .input-card input::placeholder {
+            color: rgba(255, 165, 0, 0.5);
+            text-transform: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 32px;
+            font-weight: 900;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+            border: 2px solid rgba(255, 140, 0, 0.6);
+        }
+
+        .error-message {
+            color: #FF6347;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 20px;
+            font-size: 16px;
+            display: none;
+            background: rgba(255, 99, 71, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 99, 71, 0.5);
+        }
+
+        /* Waiting Screen */
+        .waiting-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .room-code-display {
+            font-size: 72px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+
+        .waiting-text {
+            font-size: 24px;
+            color: #FFA500;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 165, 0, 0.2);
+            border-top: 5px solid #FFA500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Voting Screen */
+        .voting-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .question-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            margin-bottom: 60px;
+            line-height: 1.3;
+        }
+
+        .basket-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+
+        .basket {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .basket-label {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+        }
+
+        .basket.nah .basket-label {
+            color: #B22222;
+        }
+
+        .basket.yay .basket-label {
+            color: #32CD32;
+        }
+
+        .basket-icon {
+            font-size: 80px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .basket.drag-over .basket-icon {
+            opacity: 1;
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8));
+        }
+
+        .kitten-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+        }
+
+        .kitten {
+            font-size: 100px;
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            position: absolute;
+            transition: none;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+            z-index: 100;
+        }
+
+        .kitten:active {
+            cursor: grabbing;
+        }
+
+        .kitten.dragging {
+            opacity: 0.8;
+            transform: scale(1.1);
+            transition: none;
+        }
+
+        .drag-instruction {
+            font-size: 20px;
+            color: #FFA500;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Vote Confirmed Screen */
+        .vote-confirmed {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .vote-confirmed-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .vote-confirmed-text {
+            font-size: 36px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .vote-confirmed-subtext {
+            font-size: 20px;
+            color: #FFA500;
+            font-weight: 700;
+        }
+
+        /* Results Screen on Player */
+        .player-results-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .results-question {
+            font-size: 36px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            margin-bottom: 30px;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        .poll-results {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .poll-option {
+            margin-bottom: 30px;
+        }
+
+        .poll-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .poll-text {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .poll-percentage {
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .yay-option .poll-text,
+        .yay-option .poll-percentage {
+            color: #FF6347;
+            text-shadow: 0 0 15px rgba(255, 99, 71, 0.6);
+        }
+
+        .nah-option .poll-text,
+        .nah-option .poll-percentage {
+            color: #B22222;
+            text-shadow: 0 0 15px rgba(178, 34, 34, 0.6);
+        }
+
+        .poll-bar-container {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            position: relative;
+        }
+
+        .poll-bar {
+            height: 100%;
+            transition: width 1s ease-out;
+            border-radius: 20px;
+        }
+
+        .yay-bar {
+            background: linear-gradient(90deg, #FF4500 0%, #FF6347 100%);
+            box-shadow: 0 0 20px rgba(255, 99, 71, 0.5);
+        }
+
+        .nah-bar {
+            background: linear-gradient(90deg, #8B0000 0%, #B22222 100%);
+            box-shadow: 0 0 20px rgba(178, 34, 34, 0.5);
+        }
+
+        .poll-count {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #FFA500;
+            font-weight: 600;
+        }
+
+        .voter-list {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .voter-name {
+            padding: 6px 12px;
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid rgba(255, 165, 0, 0.4);
+            border-radius: 15px;
+            font-size: 14px;
+            color: #FFA500;
+            font-weight: 700;
+        }
+
+        @media (max-width: 400px) {
+            .title h1 {
+                font-size: 48px;
+            }
+            .question-text {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Join Screen -->
+        <div class="screen active" id="join-screen">
+            <div class="title">
+                <h1>🔥 HOT TAKE 🔥</h1>
+            </div>
+
+            <div class="input-card">
+                <label>Your Name</label>
+                <input type="text" id="player-name-input" placeholder="Enter your name" maxlength="20">
+            </div>
+
+            <div class="input-card">
+                <label>Room Code</label>
+                <input type="text" id="room-code-input" placeholder="XXXX" maxlength="4">
+            </div>
+
+            <button class="btn btn-primary" id="join-btn">Join Game</button>
+
+            <div class="error-message" id="error-message"></div>
+        </div>
+
+        <!-- Prompt Submission Screen -->
+        <div class="screen" id="prompt-screen">
+            <div style="padding: 20px 0;">
+                <h1 style="font-size: 36px; margin-bottom: 10px; text-align: center; font-weight: 900; color: #FFD700;">Add Your Own Prompts</h1>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="color: #FF8C00; font-size: 16px; font-weight: 700; margin-bottom: 8px;">CATEGORY</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #FFA500;" id="prompt-category">Loading...</div>
+                </div>
+                <p style="color: #FFA500; font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 20px;">Add up to 5 topics (optional)</p>
+            </div>
+
+            <div style="flex: 1; overflow-y: scroll; -webkit-overflow-scrolling: touch; padding: 0 0 20px 0;">
+                <div class="input-card" style="margin-bottom: 15px;">
+                    <label>Prompt 1</label>
+                    <input type="text" class="prompt-input" id="prompt-1" placeholder="e.g., Pineapple on Pizza" maxlength="50">
+                </div>
+                <div class="input-card" style="margin-bottom: 15px;">
+                    <label>Prompt 2</label>
+                    <input type="text" class="prompt-input" id="prompt-2" placeholder="e.g., Marvel Movies" maxlength="50">
+                </div>
+                <div class="input-card" style="margin-bottom: 15px;">
+                    <label>Prompt 3</label>
+                    <input type="text" class="prompt-input" id="prompt-3" placeholder="e.g., Cancel Culture" maxlength="50">
+                </div>
+                <div class="input-card" style="margin-bottom: 15px;">
+                    <label>Prompt 4</label>
+                    <input type="text" class="prompt-input" id="prompt-4" placeholder="e.g., TikTok" maxlength="50">
+                </div>
+                <div class="input-card" style="margin-bottom: 15px;">
+                    <label>Prompt 5</label>
+                    <input type="text" class="prompt-input" id="prompt-5" placeholder="e.g., Cryptocurrency" maxlength="50">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="submit-prompts-btn" style="margin-top: 0;">Submit Prompts</button>
+        </div>
+
+        <!-- Waiting Screen -->
+        <div class="screen" id="waiting-screen">
+            <div class="waiting-content">
+                <div class="room-code-display" id="room-code-display">XXXX</div>
+                <div class="waiting-text">Waiting for all players to submit prompts...</div>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Voting Screen -->
+        <div class="screen" id="voting-screen">
+            <div class="voting-content">
+                <div class="question-text" id="question-text">Is TikTok overrated?</div>
+
+                <div class="basket-container">
+                    <div class="basket nah" id="nah-basket">
+                        <div class="basket-label">NAH</div>
+                        <div class="basket-icon">🧺</div>
+                    </div>
+                    <div class="basket yay" id="yay-basket">
+                        <div class="basket-label">YAY</div>
+                        <div class="basket-icon">🧺</div>
+                    </div>
+                </div>
+
+                <div class="kitten-container" style="position: relative; height: 150px;">
+                    <div class="kitten" id="kitten" draggable="true">🐱</div>
+                </div>
+
+                <div class="drag-instruction">Drag the kitten to vote!</div>
+            </div>
+        </div>
+
+        <!-- Vote Confirmed Screen -->
+        <div class="screen" id="confirmed-screen">
+            <div class="vote-confirmed">
+                <div class="vote-confirmed-icon" id="vote-icon">✓</div>
+                <div class="vote-confirmed-text">Vote Counted!</div>
+                <div class="vote-confirmed-subtext">Waiting for results...</div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="results-screen">
+            <div class="player-results-content">
+                <div class="results-question" id="player-results-question">Is TikTok overrated?</div>
+
+                <div class="poll-results">
+                    <div class="poll-option yay-option">
+                        <div class="poll-label">
+                            <span class="poll-text">YAY</span>
+                            <span class="poll-percentage" id="player-yay-percentage">0%</span>
+                        </div>
+                        <div class="poll-bar-container">
+                            <div class="poll-bar yay-bar" id="player-yay-bar" style="width: 0%;"></div>
+                        </div>
+                        <div class="poll-count" id="player-yay-count">0 votes</div>
+                        <div class="voter-list" id="player-yay-voters"></div>
+                    </div>
+
+                    <div class="poll-option nah-option">
+                        <div class="poll-label">
+                            <span class="poll-text">NAH</span>
+                            <span class="poll-percentage" id="player-nah-percentage">0%</span>
+                        </div>
+                        <div class="poll-bar-container">
+                            <div class="poll-bar nah-bar" id="player-nah-bar" style="width: 0%;"></div>
+                        </div>
+                        <div class="poll-count" id="player-nah-count">0 votes</div>
+                        <div class="voter-list" id="player-nah-voters"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let roomCode = null;
+        let playerName = null;
+
+        // UI Elements
+        const joinScreen = document.getElementById('join-screen');
+        const waitingScreen = document.getElementById('waiting-screen');
+        const votingScreen = document.getElementById('voting-screen');
+        const confirmedScreen = document.getElementById('confirmed-screen');
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Join Game
+        document.getElementById('join-btn').addEventListener('click', () => {
+            const errorMsg = document.getElementById('error-message');
+            errorMsg.style.display = 'none';
+            errorMsg.textContent = '';
+
+            playerName = document.getElementById('player-name-input').value.trim();
+            roomCode = document.getElementById('room-code-input').value.trim().toUpperCase();
+
+            if (!playerName || !roomCode) {
+                errorMsg.textContent = 'Please enter your name and room code';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            socket.emit('join_room', {
+                player_name: playerName,
+                room_code: roomCode
+            });
+        });
+
+        // Submit Prompts
+        document.getElementById('submit-prompts-btn').addEventListener('click', () => {
+            const prompts = [];
+            for (let i = 1; i <= 5; i++) {
+                const prompt = document.getElementById(`prompt-${i}`).value.trim();
+                if (prompt) {
+                    prompts.push(prompt);
+                }
+            }
+
+            // Prompts are optional - can submit 0-5 prompts
+            socket.emit('submit_prompts', {
+                room_code: roomCode,
+                prompts: prompts
+            });
+        });
+
+        // Socket Events
+        socket.on('joined_room', (data) => {
+            document.getElementById('room-code-display').textContent = data.room_code;
+            document.getElementById('prompt-category').textContent = data.category || 'General Topics';
+            showScreen('prompt-screen');
+        });
+
+        socket.on('prompts_confirmed', () => {
+            showScreen('waiting-screen');
+        });
+
+        socket.on('error', (data) => {
+            const errorMsg = document.getElementById('error-message');
+            errorMsg.textContent = data.message;
+            errorMsg.style.display = 'block';
+        });
+
+        socket.on('game_started', () => {
+            // Game is starting, wait for first question
+        });
+
+        socket.on('new_question', (data) => {
+            const item = data.item;
+            const adjective = data.adjective.toLowerCase();
+            const question = `Is ${item} ${adjective}?`;
+            document.getElementById('question-text').textContent = question;
+
+            // Reset kitten position
+            const kitten = document.getElementById('kitten');
+            kitten.style.left = '';
+            kitten.style.top = '';
+
+            showScreen('voting-screen');
+        });
+
+        socket.on('vote_confirmed', (data) => {
+            const icon = data.vote === 'yay' ? '✓' : '✗';
+            document.getElementById('vote-icon').textContent = icon;
+            showScreen('confirmed-screen');
+        });
+
+        socket.on('display_results', (data) => {
+            // Set question text
+            const questionText = document.getElementById('question-text').textContent;
+            document.getElementById('player-results-question').textContent = questionText;
+
+            // Calculate percentages
+            const yayVotes = data.votes.yay || 0;
+            const nahVotes = data.votes.nah || 0;
+            const totalVotes = yayVotes + nahVotes;
+            const yayPercent = totalVotes > 0 ? Math.round((yayVotes / totalVotes) * 100) : 0;
+            const nahPercent = totalVotes > 0 ? Math.round((nahVotes / totalVotes) * 100) : 0;
+
+            // Update UI
+            document.getElementById('player-yay-percentage').textContent = yayPercent + '%';
+            document.getElementById('player-nah-percentage').textContent = nahPercent + '%';
+            document.getElementById('player-yay-count').textContent = yayVotes + (yayVotes === 1 ? ' vote' : ' votes');
+            document.getElementById('player-nah-count').textContent = nahVotes + (nahVotes === 1 ? ' vote' : ' votes');
+
+            // Display voter names
+            const yayVotersList = document.getElementById('player-yay-voters');
+            const nahVotersList = document.getElementById('player-nah-voters');
+            yayVotersList.innerHTML = '';
+            nahVotersList.innerHTML = '';
+
+            if (data.voter_breakdown) {
+                (data.voter_breakdown.yay || []).forEach(name => {
+                    const voterTag = document.createElement('span');
+                    voterTag.className = 'voter-name';
+                    voterTag.textContent = name;
+                    yayVotersList.appendChild(voterTag);
+                });
+
+                (data.voter_breakdown.nah || []).forEach(name => {
+                    const voterTag = document.createElement('span');
+                    voterTag.className = 'voter-name';
+                    voterTag.textContent = name;
+                    nahVotersList.appendChild(voterTag);
+                });
+            }
+
+            // Reset bars then animate
+            document.getElementById('player-yay-bar').style.width = '0%';
+            document.getElementById('player-nah-bar').style.width = '0%';
+
+            // Show results screen
+            showScreen('results-screen');
+
+            // Animate bars after screen transition
+            setTimeout(() => {
+                document.getElementById('player-yay-bar').style.width = yayPercent + '%';
+                document.getElementById('player-nah-bar').style.width = nahPercent + '%';
+            }, 100);
+        });
+
+        socket.on('room_closed', () => {
+            alert('Host has left the game');
+            window.location.href = '/';
+        });
+
+        // Kitten Drag & Drop Voting
+        const kitten = document.getElementById('kitten');
+        const nahBasket = document.getElementById('nah-basket');
+        const yayBasket = document.getElementById('yay-basket');
+
+        let draggedVote = null;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let currentY = 0;
+
+        // Desktop mouse drag events
+        let isMouseDragging = false;
+
+        kitten.addEventListener('mousedown', (e) => {
+            isMouseDragging = true;
+            const rect = kitten.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            kitten.classList.add('dragging');
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isMouseDragging) return;
+            e.preventDefault();
+
+            currentX = e.clientX;
+            currentY = e.clientY;
+
+            // Move the kitten
+            kitten.style.left = (currentX - startX) + 'px';
+            kitten.style.top = (currentY - startY) + 'px';
+
+            // Check if over baskets
+            const nahRect = nahBasket.getBoundingClientRect();
+            const yayRect = yayBasket.getBoundingClientRect();
+
+            if (currentX >= nahRect.left && currentX <= nahRect.right &&
+                currentY >= nahRect.top && currentY <= nahRect.bottom) {
+                nahBasket.classList.add('drag-over');
+                yayBasket.classList.remove('drag-over');
+                draggedVote = 'nah';
+            } else if (currentX >= yayRect.left && currentX <= yayRect.right &&
+                       currentY >= yayRect.top && currentY <= yayRect.bottom) {
+                yayBasket.classList.add('drag-over');
+                nahBasket.classList.remove('drag-over');
+                draggedVote = 'yay';
+            } else {
+                nahBasket.classList.remove('drag-over');
+                yayBasket.classList.remove('drag-over');
+                draggedVote = null;
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!isMouseDragging) return;
+
+            isMouseDragging = false;
+            kitten.classList.remove('dragging');
+            nahBasket.classList.remove('drag-over');
+            yayBasket.classList.remove('drag-over');
+
+            // Reset kitten position
+            kitten.style.left = '';
+            kitten.style.top = '';
+
+            if (draggedVote) {
+                submitVote(draggedVote);
+                draggedVote = null;
+            }
+        });
+
+        // Touch events for mobile
+        kitten.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            const rect = kitten.getBoundingClientRect();
+            startX = touch.clientX - rect.left;
+            startY = touch.clientY - rect.top;
+            kitten.classList.add('dragging');
+        });
+
+        kitten.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const touch = e.touches[0];
+            currentX = touch.clientX;
+            currentY = touch.clientY;
+
+            // Move the kitten
+            kitten.style.left = (currentX - startX) + 'px';
+            kitten.style.top = (currentY - startY) + 'px';
+
+            // Check if over baskets
+            const nahRect = nahBasket.getBoundingClientRect();
+            const yayRect = yayBasket.getBoundingClientRect();
+
+            if (currentX >= nahRect.left && currentX <= nahRect.right &&
+                currentY >= nahRect.top && currentY <= nahRect.bottom) {
+                nahBasket.classList.add('drag-over');
+                yayBasket.classList.remove('drag-over');
+                draggedVote = 'nah';
+            } else if (currentX >= yayRect.left && currentX <= yayRect.right &&
+                       currentY >= yayRect.top && currentY <= yayRect.bottom) {
+                yayBasket.classList.add('drag-over');
+                nahBasket.classList.remove('drag-over');
+                draggedVote = 'yay';
+            } else {
+                nahBasket.classList.remove('drag-over');
+                yayBasket.classList.remove('drag-over');
+                draggedVote = null;
+            }
+        });
+
+        kitten.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+
+            isDragging = false;
+            kitten.classList.remove('dragging');
+            nahBasket.classList.remove('drag-over');
+            yayBasket.classList.remove('drag-over');
+
+            // Reset kitten position
+            kitten.style.left = '';
+            kitten.style.top = '';
+
+            if (draggedVote) {
+                submitVote(draggedVote);
+                draggedVote = null;
+            }
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (votingScreen.classList.contains('active')) {
+                if (e.key === 'ArrowLeft') {
+                    submitVote('nah');
+                } else if (e.key === 'ArrowRight') {
+                    submitVote('yay');
+                }
+            }
+        });
+
+        function submitVote(vote) {
+            if (!votingScreen.classList.contains('active')) return;
+
+            socket.emit('submit_vote', {
+                room_code: roomCode,
+                vote: vote
+            });
+        }
+    </script>
+</body>
+</html>
