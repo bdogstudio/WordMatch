@@ -23,65 +23,90 @@ def generate_room_code():
 # Game Data
 ADJECTIVES = [
     "Overrated", "Underrated", "Toxic", "Cringe", "Valid", "Sus",
-    "A Red Flag", "A Vibe", "Iconic", "Unhinged", "Based", "Problematic",
-    "Elite", "Mid", "Cursed", "Chaotic", "Legendary", "Sketchy",
-    "Fire", "Peak"
+    "A Red Flag", "A Green Flag", "A Vibe", "Iconic", "Unhinged", "Based",
+    "Problematic", "Elite", "Mid", "Cursed", "Chaotic", "Legendary", "Sketchy",
+    "Fire", "Peak", "The Worst", "Giving Main Character Energy", "Giving NPC Energy",
+    "Bussin", "No Cap", "Delulu", "Slay", "Ate and Left No Crumbs", "Lowkey Fire",
+    "Highkey Sus", "Giving Ick", "Living Rent Free in My Head"
 ]
 
 CATEGORIES = {
-    "Social Media Apps": [
-        "TikTok", "Instagram", "Twitter/X", "BeReal", "Snapchat",
-        "Facebook", "LinkedIn", "Reddit", "Threads", "Hinge",
-        "Tinder", "Bumble", "Discord", "Twitch", "YouTube"
+    "Social Media Discourse": [
+        "TikTok", "Instagram Reels", "BeReal", "Snapchat Streaks",
+        "LinkedIn Influencers", "Twitter Discourse", "Reddit Arguments", "Discord Mods",
+        "Posting Thirst Traps", "Posting Your Gym Progress", "Posting Your Relationship",
+        "Main Character Instagram Stories", "Vague Posting", "Oversharing on Social Media",
+        "Posting Food Before Eating"
     ],
-    "Celebrities": [
-        "Kanye West", "Taylor Swift", "Elon Musk", "Kim Kardashian", "Joe Rogan",
-        "The Rock", "Lizzo", "Andrew Tate", "Mr. Beast", "Charli D'Amelio",
-        "Bad Bunny", "Billie Eilish", "Drake", "Olivia Rodrigo", "Harry Styles"
+    "Dating & Relationship Chaos": [
+        "Your Ex", "Your Ex's New Partner", "Situationships", "Friends With Benefits",
+        "Exes Texting You at 2AM", "Dating Your Friend's Ex", "Sliding Into DMs",
+        "First Date Small Talk", "Kissing on the First Date", "Saying 'I Love You' First",
+        "Drunk Confessions of Love", "Getting Back With Your Ex", "Love Triangles",
+        "Age Gap Relationships", "Long Distance Relationships"
     ],
-    "Foods & Drinks": [
-        "Pineapple on Pizza", "IPAs", "Oat Milk", "Kombucha", "Avocado Toast",
-        "Hot Dogs", "Espresso Martinis", "White Claws", "Sushi", "Kale",
-        "Chipotle", "Energy Drinks", "Vegan Burgers", "Mimosas", "Ranch Dressing"
+    "Spicy Truth or Drink": [
+        "Body Count Conversations", "Hookup Stories", "Walk of Shame",
+        "Your Most Embarrassing Hookup", "Fake Orgasms", "Sex Dreams About Friends",
+        "One Night Stands", "Dating App Horror Stories", "Catfishing",
+        "Sending Nudes", "Getting Caught by Parents", "Bar Bathrooms",
+        "Your Wildest Fantasy", "Threesomes", "Sugar Daddies/Mommies"
     ],
-    "Pop Culture": [
-        "Marvel Movies", "Game of Thrones Ending", "The Office", "K-Pop", "Anime",
-        "Reality TV", "True Crime Podcasts", "Fortnite", "Crypto", "NFTs",
-        "Astrology", "CrossFit", "Yoga", "Therapy", "Self-Help Books"
+    "Most Likely To... (Drink If You're It!)": [
+        "Most Likely to Go Viral on TikTok", "Most Likely to Drunk Text Their Ex",
+        "Most Likely to Hook Up With Someone Here", "Most Likely to Get Arrested",
+        "Most Likely to Become Famous", "Most Likely to Sleep Through an Alarm",
+        "Most Likely to Start Drama", "Most Likely to Cry While Drunk",
+        "Most Likely to Blackout Tonight", "Most Likely to Get a Tattoo They Regret",
+        "Most Likely to Date a Celebrity", "Most Likely to Move to Another Country",
+        "Most Likely to Get Married First", "Most Likely to Have Kids First",
+        "Most Likely to Still Be Single in 10 Years"
     ],
-    "Hot Takes": [
-        "Pumpkin Spice Season", "New Year's Eve", "Valentine's Day", "Brunch",
-        "Going to the Gym", "Working from Home", "Night Clubs", "Karaoke",
-        "Double Texting", "Splitting the Bill", "Small Talk", "Ghosting",
-        "Music Festivals", "House Parties", "Day Drinking"
+    "Party Chaos": [
+        "Shots Before 10PM", "Playing Beer Pong", "Strip Poker", "Body Shots",
+        "Drunk Karaoke", "Shotgunning Beers", "Doing Keg Stands", "Flip Cup",
+        "Kings Cup", "Drunk Dancing", "Making Out at Parties",
+        "Throwing Up at a Party", "Crying in the Bathroom", "Losing Your Phone",
+        "Uber Rides Home"
     ],
-    "Modern Life": [
-        "Cancel Culture", "Hustle Culture", "Influencers", "Podcasts",
-        "Fast Fashion", "Uber/Lyft", "DoorDash", "Airbnb", "Dating Apps",
-        "Group Chats", "Voice Messages", "Read Receipts", "FaceTime",
-        "Thrift Shopping", "Meal Prep"
+    "Gen Z Takes": [
+        "Therapy", "Astrology", "Manifestation", "Crystals and Tarot Cards",
+        "Taking Mental Health Days", "Cancel Culture", "Calling Everything Trauma",
+        "Quiet Quitting", "Side Hustles", "Hustle Culture",
+        "Being a Girl Boss", "Adulting", "Main Character Energy",
+        "Romanticizing Your Life", "Self Care Sundays"
     ],
-    "Spicy 🌶️": [
-        "Your Ex", "Your Current Partner", "One Night Stands", "Exes Texting You",
-        "Dating Your Friend's Ex", "Friends With Benefits", "Situationships",
-        "Age Gap Relationships", "Long Distance", "Open Relationships",
-        "Sliding Into DMs", "Dating Coworkers", "Clubbing", "Bar Hookups",
-        "Kissing on the First Date"
+    "The Ick List": [
+        "Guys Who Go to the Gym 7 Days a Week", "People Who Don't Drink",
+        "Picky Eaters", "Being Rude to Waiters", "Bad Texters",
+        "People Who Still Use Facebook", "Guys With Man Buns",
+        "Cargo Shorts", "Fedoras", "Excessive Cologne/Perfume",
+        "Talking About Their Ex", "Being Mean to Animals",
+        "People Who Don't Tip", "Chewing With Your Mouth Open", "Not Washing Your Hands"
     ],
-    "Party Dares": [
-        "Take a Shot", "Truth or Dare", "Spin the Bottle", "Beer Pong",
-        "Never Have I Ever", "Strip Poker", "Body Shots", "Karaoke Battle",
-        "Shotgunning Beers", "Flip Cup", "Drunk Texting", "Late Night Food Runs",
-        "Dancing on Tables", "Sneaking Out", "Breakfast After Partying"
+    "This Friend Group": [
+        "The Mom Friend", "The Drunk Friend", "The Therapy Friend",
+        "The Party Animal", "The One Always in a Relationship",
+        "The Serial Ghoster", "The Overthinker", "The Hot Mess",
+        "The One With Commitment Issues", "The Flirt", "The Drama Starter",
+        "The Heartbreaker", "The Hopeless Romantic", "The Wild Card",
+        "The One Everyone Has a Crush On"
     ],
-    "This Person": [
-        "The Host", "The Person to Your Left", "The Person to Your Right",
-        "The Youngest Person Here", "The Oldest Person Here", "The Tallest Person",
-        "The Person Who Arrived Last", "The Person Wearing Black",
-        "The Person With the Longest Hair", "The Loudest Person Here",
-        "The Quietest Person Here", "The Person Who Drank the Most",
-        "The Single Person Here", "The Person Most Likely to Party",
-        "The Person Who Suggested This Game"
+    "Broke College Student": [
+        "Ramen Noodles for Every Meal", "Overdrafting Your Bank Account",
+        "Student Loans", "Living With Your Parents", "Unpaid Internships",
+        "Cheap Beer", "Happy Hour Only", "Stealing From Dining Halls",
+        "Sharing Netflix Passwords", "Walking Instead of Ubering",
+        "Free Food at Events", "Thrifting", "Selling Your Stuff for Cash",
+        "Asking Parents for Money", "Working Three Jobs"
+    ],
+    "Absolute Chaos": [
+        "Screaming Crying Throwing Up", "Being Delulu", "Having the Ick",
+        "Stalking Your Crush on Instagram", "Overthinking Everything",
+        "Main Character Syndrome", "Posting Cringe", "Being Chronically Online",
+        "Parasocial Relationships", "Simping", "Touch Grass Moments",
+        "Living in a Situationship", "Being Down Bad", "Getting No Bitches",
+        "Ratio'd on Twitter"
     ]
 }
 
